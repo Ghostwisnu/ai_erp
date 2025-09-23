@@ -6,11 +6,11 @@
                     <header class="card-header">
                         <?= html_escape($title ?? 'Request Orders') ?>
                         <span class="tools pull-right">
-                            <a href="<?= site_url('ro/create') ?>" class="btn btn-sm btn-primary">+ Add New Request Order</a>
+                            <a href="<?= site_url('ro/create') ?>" class="btn btn-primary" style="color: black;">+ Add New Request Order</a>
                         </span>
                     </header>
 
-                    <div class="card-body">
+                    <div class=" card-body">
                         <?php if ($this->session->flashdata('message')): ?>
                             <div class="alert alert-success"><?= $this->session->flashdata('message') ?></div>
                         <?php endif; ?>

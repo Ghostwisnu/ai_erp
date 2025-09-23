@@ -69,6 +69,7 @@
                                     <td>
                                         <a href="<?= site_url('wo/edit/' . (int)$row['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
                                         <a href="<?= site_url('wo/export/' . (int)$row['id']) ?>" class="btn btn-outline-secondary btn-sm" target="_blank" rel="noopener">PDF</a>
+                                        <a href="<?= site_url('wo/detail/' . (int)$row['id']) ?>" class="btn btn-info btn-sm">Detail</a> <!-- Detail button -->
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

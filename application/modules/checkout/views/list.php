@@ -3,12 +3,6 @@
         <div class="row">
             <div class="col-sm-12">
                 <section class="card">
-                    <header class="card-header">
-                        <?= html_escape($title ?? 'Checkout Request Orders') ?>
-                        <span class="tools pull-right">
-                            <a href="<?= site_url('ro') ?>" class="btn btn-sm btn-default">Back to RO</a>
-                        </span>
-                    </header>
 
                     <div class="card-body">
                         <?php if ($this->session->flashdata('message')): ?>
