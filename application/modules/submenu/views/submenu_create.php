@@ -6,7 +6,7 @@
                     <header class="card-header">
                         Tambah Submenu
                         <span class="tools pull-right">
-                            <a href="<?= site_url('submenu/' . $menu_id); ?>" class="btn btn-sm btn-secondary">Kembali</a>
+                            <a href="<?= site_url('submenu/' . $menu_id); ?>" class="btn btn-sm btn-secondary" style="color: black;">Kembali</a>
                             <a href="javascript:;" class="fa fa-chevron-down"></a>
                             <a href="javascript:;" class="fa fa-times"></a>
                         </span>

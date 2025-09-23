@@ -46,7 +46,7 @@ class Register extends MX_Controller
                 'password' => $password,
                 'image' => $image,
                 'role_id' => 2, // Default role_id untuk user biasa
-                'is_active' => 0, // User aktif
+                'is_active' => 1, // User aktif
                 'created_at' => date('Y-m-d H:i:s')
             ];
 

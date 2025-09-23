@@ -7,7 +7,7 @@
                         Submenu Management
                         <span class="tools pull-right">
                             <?php if (!empty($menu_id)): ?>
-                                <a href="<?= site_url('submenu/create/' . $menu_id); ?>" class="btn btn-sm btn-primary">+ Tambah Submenu</a>
+                                <a href="<?= site_url('submenu/create/' . $menu_id); ?>" class="btn btn-sm btn-primary" style="color: black;">+ Tambah Submenu</a>
                             <?php endif; ?>
                             <a href="javascript:;" class="fa fa-chevron-down"></a>
                             <a href="javascript:;" class="fa fa-times"></a>

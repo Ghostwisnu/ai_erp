@@ -6,9 +6,9 @@
                     <header class="card-header">
                         <?= html_escape($title ?? 'Production Report Detail') ?>
                         <span class="tools pull-right">
-                            <a class="btn btn-sm btn-default" href="<?= site_url('production') ?>">Back</a>
+                            <a class="btn btn-sm btn-default" style="color: black;" href="<?= site_url('production') ?>">Back</a>
                             <?php if (!empty($hdr['id'])): ?>
-                                <a class="btn btn-sm btn-primary" target="_blank" href="<?= site_url('production/pdf/' . (int)$hdr['id']) ?>">Export PDF</a>
+                                <a class="btn btn-sm btn-primary" target="_blank" style="color: black;" href="<?= site_url('production/pdf/' . (int)$hdr['id']) ?>">Export PDF</a>
                             <?php endif; ?>
                         </span>
                     </header>
