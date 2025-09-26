@@ -7,8 +7,9 @@
 
             <div class="card-body">
                 <!-- Search Form -->
+                <!-- Search Form -->
                 <form method="GET" action="<?= site_url('pps/index') ?>" class="form-inline mb-3">
-                    <input type="text" name="search" class="form-control mr-2" placeholder="Cari WO..." value="<?= $this->input->get('search') ?>">
+                    <input type="text" name="search" class="form-control mr-2" placeholder="Cari WO, Kategori WO, Brand..." value="<?= $this->input->get('search') ?>">
 
                     <!-- Search Filter -->
                     <button type="submit" class="btn btn-primary">Cari</button>
@@ -21,6 +22,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>No WO</th>
+                                <th>Kategori WO</th>
                                 <th>Brand Name</th>
                                 <th>Art & Color</th>
                                 <th>Cutting (Qty)</th>
@@ -38,6 +40,7 @@
                                 <tr>
                                     <td><?= $no++ ?></td>
                                     <td><?= html_escape($wo['no_wo']) ?></td>
+                                    <td><?= html_escape($wo['kategori_wo']) ?></td>
                                     <td><?= html_escape($wo['brand_name']) ?></td>
                                     <td><?= html_escape($wo['art_color']) ?></td>
                                     <td><?= $wo['cutting'] ?></td>

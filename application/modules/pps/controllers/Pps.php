@@ -47,14 +47,15 @@ class Pps extends MX_Controller
     // Method to get data based on search keyword and pagination
     private function _get_search_results($search = '', $limit = 10, $start = 0)
     {
-        $this->db->select('w.id AS wo_id, w.no_wo, b.name AS brand_name, w.art_color');
+        $this->db->select('w.id AS wo_id, w.no_wo, w.kategori_wo, b.name AS brand_name, w.art_color');
         $this->db->from($this->wo_l1 . ' w');
         $this->db->join('brands b', 'b.id = w.brand_id', 'left');
 
         if ($search) {
-            $this->db->like('w.no_wo', $search);
-            $this->db->or_like('b.name', $search);
-            $this->db->or_like('w.art_color', $search);
+            $this->db->like('w.no_wo', $search);        // Cari berdasarkan no_wo
+            $this->db->or_like('b.name', $search);      // Cari berdasarkan brand_name
+            $this->db->or_like('w.art_color', $search); // Cari berdasarkan art_color
+            $this->db->or_like('LOWER(w.kategori_wo)', strtolower($search)); // Tambahkan pencarian berdasarkan kategori_wo
         }
 
         $this->db->limit($limit, $start);
@@ -107,6 +108,7 @@ class Pps extends MX_Controller
             $wo_summary[] = [
                 'wo_id' => $wo_id,
                 'no_wo' => $wo['no_wo'],
+                'kategori_wo' => $wo['kategori_wo'],
                 'brand_name' => $wo['brand_name'],
                 'art_color' => $wo['art_color'],
                 'cutting' => $category_qty['cutting'],
@@ -130,9 +132,10 @@ class Pps extends MX_Controller
         $this->db->join('brands b', 'b.id = w.brand_id', 'left');
 
         if ($search) {
-            $this->db->like('w.no_wo', $search);
-            $this->db->or_like('b.name', $search);
-            $this->db->or_like('w.art_color', $search);
+            $this->db->like('w.no_wo', $search);        // Cari berdasarkan no_wo
+            $this->db->or_like('b.name', $search);      // Cari berdasarkan brand_name
+            $this->db->or_like('w.art_color', $search); // Cari berdasarkan art_color
+            $this->db->or_like('LOWER(w.kategori_wo)', strtolower($search)); // Tambahkan pencarian berdasarkan kategori_wo
         }
 
         return $this->db->count_all_results();
