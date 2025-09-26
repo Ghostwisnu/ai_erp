@@ -7,14 +7,14 @@
 
             <div class="card-body">
                 <!-- Search Form -->
-                <!-- Search Form -->
                 <form method="GET" action="<?= site_url('pps/index') ?>" class="form-inline mb-3">
                     <input type="text" name="search" class="form-control mr-2" placeholder="Cari WO, Kategori WO, Brand..." value="<?= $this->input->get('search') ?>">
-
-                    <!-- Search Filter -->
                     <button type="submit" class="btn btn-primary">Cari</button>
-                    <a href="<?= site_url('pps/index') ?>" class="btn btn-secondary ml-2">Reset</a> <!-- Reset Button -->
+                    <a href="<?= site_url('pps/index') ?>" class="btn btn-secondary ml-2">Reset</a>
                 </form>
+
+                <!-- Export to PDF Button -->
+                <a href="<?= site_url('pps/export_pdf?search=' . $this->input->get('search')) ?>" class="btn btn-success mb-3">Export to PDF</a>
 
                 <?php if (!empty($wo_summary)): ?>
                     <table class="table table-bordered">

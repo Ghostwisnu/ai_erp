@@ -1,5 +1,9 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
+
 class Pps extends MX_Controller
 {
     private $wo_l1 = 'wo_l1'; // Table for WO level 1
@@ -156,6 +160,34 @@ class Pps extends MX_Controller
 
         // The finish goods qty is the minimum qty from all categories (Cutting to Packaging)
         return min($valid_category_qty);
+    }
+
+    // Export PDF method
+    public function export_pdf()
+    {
+        // Fetch search keyword from GET request
+        $search = $this->input->get('search', TRUE);
+        $wo_summary = $this->_get_search_results($search, 1000, 0); // Fetch data for all results
+
+        // Prepare the data for the PDF
+        $data['wo_summary'] = $wo_summary;
+
+        // Load the view for PDF
+        $html = $this->load->view('pps/export_pdf', $data, TRUE); // 'pps/export_pdf' is the view to export
+
+        // DomPDF setup
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+
+        // Initialize DOMPDF
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape'); // Set paper size
+        $dompdf->render(); // Render the PDF
+
+        // Stream the generated PDF (display in browser)
+        $dompdf->stream("production_summary.pdf", array("Attachment" => 0));  // 0 means display in browser
     }
 
     // Helper render method
