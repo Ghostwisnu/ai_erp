@@ -36,7 +36,7 @@
                                             <td><?= html_escape($r['no_ro'] ?? '') ?></td>
                                             <td><?= html_escape($r['no_wo'] ?? '') ?></td>
                                             <td><?= html_escape($r['sfg_name'] ?? '') ?></td>
-                                            <td class="text-right"><?= number_format((float)($r['total_qty'] ?? 0), 6) ?></td>
+                                            <td class="text-right"><?= number_format((float)($r['total_qty'] ?? 0)) ?></td>
                                             <td><?= html_escape($r['status_prod'] ?? '') ?></td>
                                             <td class="text-right">
                                                 <a class="btn btn-sm btn-info" href="<?= site_url('production/show/' . (int)$r['id']) ?>">Show</a>
