@@ -47,7 +47,7 @@ class Production extends MX_Controller
         $page     = (int)($this->input->get('per_page') ?: 0);
 
         // TAMPILKAN submitted + belum_lengkap + sudah_lengkap
-        $where_status = "h.status_ro IN ('submitted','belum_lengkap','sudah_lengkap')";
+        $where_status = "h.status_ro IN ('submitted','belum lengkap','sudah lengkap')";
 
         // ---------- COUNT ----------
         if ($q) {
@@ -136,16 +136,38 @@ class Production extends MX_Controller
     public function index()
     {
         $data['title'] = 'Laporan Produksi';
-        $rows = $this->db->select('p.id, p.prod_code, p.total_qty, p.status_prod, p.created_at,
-                                   h.no_ro, w1.no_wo, i2.item_name AS sfg_name')
-            ->from($this->prod_hdr . ' p')
-            ->join($this->ro_hdr . ' h', 'h.id=p.ro_id', 'left')
-            ->join($this->wo_l1 . ' w1', 'w1.id=p.wo_l1_id', 'left')
-            ->join($this->wo_l2 . ' w2', 'w2.id=p.wo_l2_id', 'left')
-            ->join($this->items . ' i2', 'i2.id=w2.item_id', 'left')
-            ->order_by('p.id', 'DESC')
-            ->get()->result_array();
+
+        // Ambil parameter pencarian dari query string
+        $q = $this->input->get('q', TRUE);  // Nilai pencarian (default NULL jika kosong)
+
+        // Build base query
+        $this->db->select('p.id, p.prod_code, p.total_qty, p.status_prod, p.created_at,
+                       h.no_ro, w1.no_wo, i2.item_name AS sfg_name');
+        $this->db->from($this->prod_hdr . ' p');
+        $this->db->join($this->ro_hdr . ' h', 'h.id = p.ro_id', 'left');
+        $this->db->join($this->wo_l1 . ' w1', 'w1.id = p.wo_l1_id', 'left');
+        $this->db->join($this->wo_l2 . ' w2', 'w2.id = p.wo_l2_id', 'left');
+        $this->db->join($this->items . ' i2', 'i2.id = w2.item_id', 'left');
+
+        // Menambahkan kondisi pencarian jika ada
+        if ($q) {
+            $q_esc = $this->db->escape_like_str($q);  // Escape query string
+            $this->db->like('h.no_ro', $q_esc);      // Pencarian pada no_ro
+            $this->db->or_like('w1.no_wo', $q_esc);   // Pencarian pada no_wo
+            $this->db->or_like('i2.item_name', $q_esc);  // Pencarian pada item_name (SFG)
+        }
+
+        // Order by prod_id (default DESC)
+        $this->db->order_by('p.id', 'DESC');
+
+        // Eksekusi query
+        $rows = $this->db->get()->result_array();
+
+        // Kirimkan data ke view
         $data['rows'] = $rows;
+        $data['q'] = $q;  // Kirimkan nilai pencarian untuk dipakai di form pencarian di view
+
+        // Render tampilan
         $this->_render('production/list', $data);
     }
 

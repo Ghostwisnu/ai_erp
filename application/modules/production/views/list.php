@@ -17,6 +17,16 @@
                             <div class="alert alert-danger"><?= $this->session->flashdata('flash_error') ?></div>
                         <?php endif; ?>
 
+                        <!-- Search Form -->
+                        <form method="get" class="form-inline mb-3">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="q" value="<?= html_escape($q ?? '') ?>" placeholder="Search by RO, WO, or SFG...">
+                                <button class="btn btn-primary ml-2" type="submit">Search</button>
+                                <a class="btn btn-default ml-1" href="<?= current_url() ?>">Reset</a>
+                            </div>
+                        </form>
+
+                        <!-- Production Table -->
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -36,7 +46,7 @@
                                             <td><?= html_escape($r['no_ro'] ?? '') ?></td>
                                             <td><?= html_escape($r['no_wo'] ?? '') ?></td>
                                             <td><?= html_escape($r['sfg_name'] ?? '') ?></td>
-                                            <td class="text-right"><?= number_format((float)($r['total_qty'] ?? 0), 6) ?></td>
+                                            <td class="text-right"><?= number_format((float)($r['total_qty'] ?? 0)) ?></td>
                                             <td><?= html_escape($r['status_prod'] ?? '') ?></td>
                                             <td class="text-right">
                                                 <a class="btn btn-sm btn-info" href="<?= site_url('production/show/' . (int)$r['id']) ?>">Show</a>

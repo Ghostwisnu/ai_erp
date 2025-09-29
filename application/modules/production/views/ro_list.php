@@ -49,7 +49,7 @@
                                                         <a href="<?= site_url('production/create/' . (int)$r['id']) ?>" class="btn btn-sm btn-primary">
                                                             Create Report
                                                         </a>
-                                                    <?php elseif (($r['status_ro'] ?? '') === 'belum_lengkap' && !empty($r['prod_id'])): ?>
+                                                    <?php elseif (($r['status_ro'] ?? '') === 'belum lengkap' && !empty($r['prod_id'])): ?>
                                                         <a href="<?= site_url('production/edit_by_ro/' . (int)$r['id']) ?>" class="btn btn-sm btn-warning">
                                                             Update Report
                                                         </a>

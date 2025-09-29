@@ -1,3 +1,29 @@
+<style>
+    /* CSS untuk memberikan warna berdasarkan status */
+    .status-draft {
+        background-color: #ffeb3b;
+        /* Kuning */
+        color: black;
+    }
+
+    .status-submitted {
+        background-color: #2196f3;
+        /* Biru */
+        color: white;
+    }
+
+    .status-belum-lengkap {
+        background-color: #f44336;
+        /* Merah */
+        color: white;
+    }
+
+    .status-sudah-lengkap {
+        background-color: #4caf50;
+        /* Hijau */
+        color: white;
+    }
+</style>
 <section id="main-content">
     <section class="wrapper">
         <div class="row">
@@ -10,7 +36,7 @@
                         </span>
                     </header>
 
-                    <div class=" card-body">
+                    <div class="card-body">
                         <?php if ($this->session->flashdata('message')): ?>
                             <div class="alert alert-success"><?= $this->session->flashdata('message') ?></div>
                         <?php endif; ?>
@@ -55,7 +81,9 @@
                                     <?php if (!empty($rows)): foreach ($rows as $r): ?>
                                             <tr>
                                                 <td><?= html_escape($r['no_ro']) ?></td>
-                                                <td><?= html_escape($r['status_ro']) ?></td>
+                                                <td class="status-<?= strtolower(str_replace(' ', '-', $r['status_ro'])) ?>">
+                                                    <?= html_escape($r['status_ro']) ?>
+                                                </td>
                                                 <td><?= html_escape($r['ro_date'] ?? '') ?></td>
                                                 <td class="text-right">
                                                     <a href="<?= site_url('ro/edit/' . (int)$r['id']) ?>" class="btn btn-sm btn-info">Edit</a>
