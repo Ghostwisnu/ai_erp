@@ -6,7 +6,7 @@
                     <header class="card-header">
                         <?= html_escape($title ?? 'Preview Import Data') ?>
                         <span class="tools pull-right">
-                            <a href="<?= $back_url ?>" class="btn btn-sm btn-secondary">Kembali</a>
+                            <a href="<?= $back_url ?>" class="btn btn-sm btn-secondary" style="color: black;">Kembali</a>
                         </span>
                     </header>
                     <div class="card-body">

@@ -6,7 +6,7 @@
                     <header class="card-header">
                         Edit Menu
                         <span class="tools pull-right">
-                            <a href="<?= site_url('menu'); ?>" class="btn btn-sm btn-secondary">Kembali</a>
+                            <a href="<?= site_url('menu'); ?>" style="color: black;" class="btn btn-sm btn-secondary">Kembali</a>
                             <a href="javascript:;" class="fa fa-chevron-down"></a>
                             <a href="javascript:;" class="fa fa-times"></a>
                         </span>

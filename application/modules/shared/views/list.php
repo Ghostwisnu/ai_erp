@@ -7,7 +7,7 @@
                         <?= html_escape($title ?? 'List') ?>
                         <span class="tools pull-right">
                             <?php if (!empty($create_url)): ?>
-                                <a href="<?= $create_url ?>" class="btn btn-sm btn-primary">+ Tambah</a>
+                                <a href="<?= $create_url ?>" class="btn btn-sm btn-primary" style="color: black;">+ Tambah</a>
                             <?php endif; ?>
 
                             <?php if (!empty($import_url)): ?>
@@ -18,15 +18,15 @@
                             <?php endif; ?>
 
                             <?php if (!empty($export_xlsx_url)): ?>
-                                <a href="<?= $export_xlsx_url ?>" class="btn btn-sm btn-outline-primary">Export XLSX</a>
+                                <a href="<?= $export_xlsx_url ?>" class="btn btn-sm btn-outline-primary" style="color: black;">Export XLSX</a>
                             <?php endif; ?>
                             <?php if (!empty($export_pdf_url)): ?>
-                                <a href="<?= $export_pdf_url ?>" class="btn btn-sm btn-outline-danger">Export PDF</a>
+                                <a href="<?= $export_pdf_url ?>" class="btn btn-sm btn-outline-danger" style="color: black;">Export PDF</a>
                             <?php endif; ?>
 
                             <!-- Tombol untuk download template Excel, hanya tampil pada halaman yang memerlukan fitur ini -->
                             <?php if (!isset($no_template) || $no_template !== true): ?>
-                                <a href="<?= site_url(uri_string() . '/download_template') ?>" class="btn btn-sm btn-info">Download Template</a>
+                                <a href="<?= site_url(uri_string() . '/download_template') ?>" class="btn btn-sm btn-info" style="color: black;">Download Template</a>
                             <?php endif; ?>
 
                             <a href="javascript:;" class="fa fa-chevron-down"></a>

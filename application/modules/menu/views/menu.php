@@ -6,7 +6,7 @@
                     <header class="card-header">
                         Menu Management
                         <span class="tools pull-right">
-                            <a href="<?= site_url('menu/create'); ?>" class="btn btn-sm btn-primary">+ Tambah Menu</a>
+                            <a href="<?= site_url('menu/create'); ?>" class="btn btn-sm btn-primary" style="color: black;">+ Tambah Menu</a>
                             <a href="javascript:;" class="fa fa-chevron-down"></a>
                             <a href="javascript:;" class="fa fa-times"></a>
                         </span>

@@ -6,7 +6,7 @@
                     <header class="card-header">
                         <?= html_escape($title ?? 'Laporan Produksi') ?>
                         <span class="tools pull-right">
-                            <a href="<?= site_url('production/ro_list') ?>" class="btn btn-sm btn-default">RO Submitted</a>
+                            <a href="<?= site_url('production/ro_list') ?>" class="btn btn-sm btn-default" style="color: black;">RO Submitted</a>
                         </span>
                     </header>
                     <div class="card-body">

@@ -1,8 +1,11 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
+
 class Pps extends MX_Controller
 {
-
     private $wo_l1 = 'wo_l1'; // Table for WO level 1
     private $items = 'items'; // Table for items
     private $checkin_det = 'checkin_det'; // Table for checkin details
@@ -23,13 +26,46 @@ class Pps extends MX_Controller
 
     public function index()
     {
-        // Fetch all WO data
-        $wo_data = $this->db->select('w.id AS wo_id, w.no_wo, b.name AS brand_name, w.art_color')
-            ->from($this->wo_l1 . ' w')
-            ->join('brands b', 'b.id = w.brand_id', 'left')
-            ->get()->result_array();
+        $data['title'] = 'Production Summary';
 
-        // Fetch checkin details for all WO and calculate the necessary values
+        // Fetch search keyword from GET request
+        $search = $this->input->get('search', TRUE);
+
+        // Pagination Configuration
+        $config['base_url'] = site_url('pps/index');
+        $config['total_rows'] = $this->_get_search_count($search);
+        $config['per_page'] = 10;  // Set number of records per page
+        $config['uri_segment'] = 3;
+        $this->pagination->initialize($config);
+
+        // Get data for current page
+        $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+        $data['wo_summary'] = $this->_get_search_results($search, $config['per_page'], $page);
+
+        // Pass pagination links to the view
+        $data['pagination'] = $this->pagination->create_links();
+
+        $this->_render('pps/index', $data);
+    }
+
+    // Method to get data based on search keyword and pagination
+    private function _get_search_results($search = '', $limit = 10, $start = 0)
+    {
+        $this->db->select('w.id AS wo_id, w.no_wo, w.kategori_wo, b.name AS brand_name, w.art_color');
+        $this->db->from($this->wo_l1 . ' w');
+        $this->db->join('brands b', 'b.id = w.brand_id', 'left');
+
+        if ($search) {
+            $this->db->like('w.no_wo', $search);        // Cari berdasarkan no_wo
+            $this->db->or_like('b.name', $search);      // Cari berdasarkan brand_name
+            $this->db->or_like('w.art_color', $search); // Cari berdasarkan art_color
+            $this->db->or_like('LOWER(w.kategori_wo)', strtolower($search)); // Tambahkan pencarian berdasarkan kategori_wo
+        }
+
+        $this->db->limit($limit, $start);
+        $wo_data = $this->db->get()->result_array();
+
+        // Fetch check-in details for all WO and calculate the necessary values
         $wo_summary = [];
         foreach ($wo_data as $wo) {
             $wo_id = $wo['wo_id'];
@@ -76,6 +112,7 @@ class Pps extends MX_Controller
             $wo_summary[] = [
                 'wo_id' => $wo_id,
                 'no_wo' => $wo['no_wo'],
+                'kategori_wo' => $wo['kategori_wo'],
                 'brand_name' => $wo['brand_name'],
                 'art_color' => $wo['art_color'],
                 'cutting' => $category_qty['cutting'],
@@ -88,13 +125,27 @@ class Pps extends MX_Controller
             ];
         }
 
-        $data['wo_summary'] = $wo_summary;
-        $this->_render('pps/index', $data);
+        return $wo_summary;
     }
 
-    /**
-     * Calculate Finish Goods quantity based on the smallest quantity from each category.
-     */
+    // Method to get the count of records based on search
+    private function _get_search_count($search = '')
+    {
+        $this->db->select('w.id');
+        $this->db->from($this->wo_l1 . ' w');
+        $this->db->join('brands b', 'b.id = w.brand_id', 'left');
+
+        if ($search) {
+            $this->db->like('w.no_wo', $search);        // Cari berdasarkan no_wo
+            $this->db->or_like('b.name', $search);      // Cari berdasarkan brand_name
+            $this->db->or_like('w.art_color', $search); // Cari berdasarkan art_color
+            $this->db->or_like('LOWER(w.kategori_wo)', strtolower($search)); // Tambahkan pencarian berdasarkan kategori_wo
+        }
+
+        return $this->db->count_all_results();
+    }
+
+    // Method to calculate Finish Goods quantity based on the smallest quantity from each category
     private function calculate_finish_goods_qty($category_qty)
     {
         // Get the total qty for each category, but only if it's greater than 0
@@ -108,11 +159,38 @@ class Pps extends MX_Controller
         }
 
         // The finish goods qty is the minimum qty from all categories (Cutting to Packaging)
-        $finish_goods_qty = min($valid_category_qty);
-
-        return $finish_goods_qty;
+        return min($valid_category_qty);
     }
 
+    // Export PDF method
+    public function export_pdf()
+    {
+        // Fetch search keyword from GET request
+        $search = $this->input->get('search', TRUE);
+        $wo_summary = $this->_get_search_results($search, 1000, 0); // Fetch data for all results
+
+        // Prepare the data for the PDF
+        $data['wo_summary'] = $wo_summary;
+
+        // Load the view for PDF
+        $html = $this->load->view('pps/export_pdf', $data, TRUE); // 'pps/export_pdf' is the view to export
+
+        // DomPDF setup
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+
+        // Initialize DOMPDF
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape'); // Set paper size
+        $dompdf->render(); // Render the PDF
+
+        // Stream the generated PDF (display in browser)
+        $dompdf->stream("production_summary.pdf", array("Attachment" => 0));  // 0 means display in browser
+    }
+
+    // Helper render method
     private function _render($view, $data)
     {
         $data['user'] = $this->session->userdata('username');

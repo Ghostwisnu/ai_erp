@@ -17,12 +17,20 @@
 
                     <!-- Input No WO -->
                     <div class="row mb-3">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <label for="no_wo">No WO</label>
                             <input type="text" class="form-control" id="no_wo" name="no_wo" value="<?= htmlspecialchars($no_wo ?? '', ENT_QUOTES, 'UTF-8') ?>" required>
                         </div>
+                        <div class="col-md-6">
+                            <label for="kategori_wo">Kategori WO</label>
+                            <select class="form-control" id="kategori_wo" name="kategori_wo" required>
+                                <option value="">- Pilih Kategori WO -</option>
+                                <option value="Injection" <?= isset($kategori_wo) && $kategori_wo == 'Injection' ? 'selected' : '' ?>>Injection</option>
+                                <option value="Cementing" <?= isset($kategori_wo) && $kategori_wo == 'Cementing' ? 'selected' : '' ?>>Cementing</option>
+                                <option value="Stitchdown" <?= isset($kategori_wo) && $kategori_wo == 'Stitchdown' ? 'selected' : '' ?>>Stitchdown</option>
+                            </select>
+                        </div>
                     </div>
-
                     <!-- Pilih BOM + Tanggal -->
                     <div class="row mb-3">
                         <div class="col-md-6">

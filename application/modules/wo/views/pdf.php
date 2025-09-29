@@ -103,6 +103,24 @@ function nfmt($n)
         .w-60 {
             width: 60%;
         }
+
+        /* Styling for the horizontal Size Run layout */
+        .size-run-container {
+            margin-bottom: 20px;
+        }
+
+        .size-run-item {
+            padding: 6px;
+            border: 1px solid #333;
+            margin-bottom: 8px;
+        }
+
+        .size-run-header {
+            font-weight: bold;
+            background: #f0f0f0;
+            text-align: center;
+            /* Keep headers centered */
+        }
     </style>
 </head>
 
@@ -153,34 +171,48 @@ function nfmt($n)
             <th>Catatan</th>
             <td colspan="3"><?= nl2br(htmlspecialchars($w1['notes'] ?? '', ENT_QUOTES, 'UTF-8')) ?></td>
         </tr>
+        <!-- Menampilkan Kategori WO -->
+        <tr>
+            <th>Kategori WO</th>
+            <td colspan="3"><?= htmlspecialchars($w1['kategori_wo'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+        </tr>
     </table>
 
-    <!-- Size Run -->
-    <h3 class="mb-2" style="margin-top:14px;">Size Run</h3>
-    <table>
+    <h3 class="mb-2">Size Run</h3>
+    <table style="width: 100%; border-collapse: collapse;">
         <thead>
             <tr>
-                <th class="w-40">Size</th>
-                <th class="w-20">Qty</th>
-                <th class="w-40">Note</th>
+                <th style="text-align: center; border: 1px solid #000;">Size</th>
+                <!-- Loop through the sizes data -->
+                <?php if (!empty($sizes)): ?>
+                    <?php foreach ($sizes as $size): ?>
+                        <th style="text-align: center; border: 1px solid #000;">
+                            <?= htmlspecialchars($size['size_name'] ?? 'Unknown Size', ENT_QUOTES, 'UTF-8') ?>
+                        </th>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <th colspan="13" style="text-align: center; border: 1px solid #000;">No sizes available</th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody>
-            <?php if (!empty($sizes)): ?>
-                <?php foreach ($sizes as $s): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($s['size_name'] ?? ('#' . $s['size_id']), ENT_QUOTES, 'UTF-8') ?></td>
-                        <td class="text-right"><?= nfmt($s['qty'] ?? 0) ?></td>
-                        <td><?= htmlspecialchars($s['note'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="3" class="text-center muted">Tidak ada data size.</td>
-                </tr>
-            <?php endif; ?>
+            <tr>
+                <td style="text-align: center; border: 1px solid #000;">Qty</td>
+                <!-- Loop through the quantities for each size -->
+                <?php if (!empty($sizes)): ?>
+                    <?php foreach ($sizes as $size): ?>
+                        <td style="text-align: center; border: 1px solid #000;">
+                            <?= htmlspecialchars($size['qty'] ?? '0', ENT_QUOTES, 'UTF-8') ?>
+                        </td>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <td colspan="13" style="text-align: center; border: 1px solid #000;">No quantity data available</td>
+                <?php endif; ?>
+            </tr>
         </tbody>
     </table>
+
+    <!-- Size Run -->
 
     <!-- BOM Detail -->
     <h3 class="mb-2" style="margin-top:14px;">SFG & Materials</h3>

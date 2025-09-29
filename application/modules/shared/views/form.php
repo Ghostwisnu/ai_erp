@@ -6,7 +6,7 @@
                     <header class="card-header">
                         <?= html_escape($title ?? 'Form') ?>
                         <span class="tools pull-right">
-                            <a href="<?= $back_url ?>" class="btn btn-sm btn-secondary">Kembali</a>
+                            <a href="<?= $back_url ?>" class="btn btn-sm btn-secondary" style="color: black;">Kembali</a>
                             <a href="javascript:;" class="fa fa-chevron-down"></a>
                             <a href="javascript:;" class="fa fa-times"></a>
                         </span>

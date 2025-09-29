@@ -42,28 +42,144 @@ class Wo extends MX_Controller
     {
         $data['title'] = 'Work Orders';
 
+        // Ambil kata kunci pencarian jika ada
+        $search = $this->input->get('search', TRUE);
+
+        // Pagination Configuration
+        $config['base_url'] = site_url('wo/index');
+        $config['total_rows'] = $this->_get_search_count($search);
+        $config['per_page'] = 10;  // Set jumlah data per halaman
+        $config['uri_segment'] = 3;
+        $this->pagination->initialize($config);
+
+        // Ambil data dengan pagination
+        $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+        $data['wo_list'] = $this->_get_search_results($search, $config['per_page'], $page);
+
+        // Pass pagination links to the view
+        $data['pagination'] = $this->pagination->create_links();
+
+        $this->_render('wo/list', $data);
+    }
+
+    public function detail($id)
+    {
+        if (!ctype_digit((string)$id)) show_404();
+
+        // Get Work Order data
+        $wo = $this->gm->get_row_where($this->wo_l1, ['id' => (int)$id]);
+        if (!$wo) show_404();
+
+        // Get associated size-run
+        $sizes = $this->db
+            ->select('ws.size_id, ws.qty, bs.size_name, bs.note')
+            ->from($this->wo_sz . ' ws')
+            ->join('brand_sizes bs', 'bs.id = ws.size_id', 'left')
+            ->where('ws.wo_l1_id', (int)$id)
+            ->order_by('bs.size_name', 'ASC')
+            ->get()->result_array();
+
+        // Get materials (SFG and BOM)
+        $l2_rows = $this->db
+            ->select('w2.id, w2.item_id, it.item_name')
+            ->from($this->wo_l2 . ' w2')
+            ->join('items it', 'it.id = w2.item_id', 'left')
+            ->where('w2.wo_l1_id', (int)$id)
+            ->order_by('w2.id', 'ASC')
+            ->get()->result_array();
+
+        $l2_list = [];
+        foreach ($l2_rows as $l2) {
+            $mats = $this->db
+                ->select('w3.item_id, itm.item_name, w3.consumption, w3.required_qty')
+                ->from($this->wo_l3 . ' w3')
+                ->join('items itm', 'itm.id = w3.item_id', 'left')
+                ->where('w3.wo_l2_id', (int)$l2['id'])
+                ->order_by('w3.id', 'ASC')
+                ->get()->result_array();
+            $l2_list[] = [
+                'item_id'   => (int)$l2['item_id'],
+                'item_name' => $l2['item_name'],
+                'materials' => $mats,
+            ];
+        }
+
+        // Fetch additional data for Item Code, Item Name, and Brand
+        $this->db->select('i.item_code, i.item_name, b.name AS brand_name, w1.no_wo');
+        $this->db->from('items i');
+        $this->db->join('brands b', 'b.id = i.brand_id', 'left');
+        $this->db->join($this->wo_l1 . ' w1', 'w1.item_id = i.id', 'left');
+        $this->db->where('w1.id', (int)$id);
+        $wo_header = $this->db->get()->row_array();
+
+        // Prepare data for the view
+        $data = [
+            'title' => 'Detail Work Order',
+            'wo' => $wo,
+            'wo_header' => $wo_header, // Add the item_code, item_name, brand_name, and no_wo
+            'sizes' => $sizes,
+            'l2_list' => $l2_list,
+        ];
+
+        $this->_render('wo/detail', $data);
+    }
+
+
+    // Method untuk mengambil data berdasarkan pencarian dan pagination
+    private function _get_search_results($search = '', $limit = 10, $start = 0)
+    {
         $this->db->select('
-            w1.id,
-            w1.no_wo,
-            w1.bom_l1_id,
-            w1.date_order,
-            w1.x_factory_date,
-            w1.total_size_qty,
-            i.item_code AS item_code,
-            i.item_name AS item_name,
-            b.name      AS brand_name,
-            u.name      AS unit_name,
-            w1.created_at
-        ');
+        w1.id,
+        w1.no_wo,
+        w1.bom_l1_id,
+        w1.date_order,
+        w1.x_factory_date,
+        w1.total_size_qty,
+        i.item_code AS item_code,
+        i.item_name AS item_name,
+        b.name AS brand_name,
+        u.name AS unit_name,
+        w1.created_at,
+        w1.kategori_wo 
+    ');
         $this->db->from($this->wo_l1 . ' w1');
         $this->db->join('items i', 'i.id = w1.item_id', 'left');
         $this->db->join('brands b', 'b.id = w1.brand_id', 'left');
         $this->db->join('units u', 'u.id = w1.unit_id', 'left');
+
+        if ($search) {
+            $this->db->like('i.item_code', $search);
+            $this->db->or_like('i.item_name', $search);
+            $this->db->or_like('b.name', $search);
+        }
+
+        $kategori_wo = $this->input->get('kategori_wo');
+        if ($kategori_wo) {
+            $this->db->where('w1.kategori_wo', $kategori_wo);  // Filter berdasarkan kategori_wo
+        }
+
+        $this->db->limit($limit, $start);
         $this->db->order_by('w1.id', 'DESC');
 
-        $data['wo_list'] = $this->db->get()->result_array();
+        return $this->db->get()->result_array();
+    }
 
-        $this->_render('wo/list', $data);
+    // Method untuk menghitung jumlah total berdasarkan pencarian
+    private function _get_search_count($search = '')
+    {
+        $this->db->select('w1.id');
+        $this->db->from($this->wo_l1 . ' w1');
+        $this->db->join('items i', 'i.id = w1.item_id', 'left');
+        $this->db->join('brands b', 'b.id = w1.brand_id', 'left');
+        $this->db->join('units u', 'u.id = w1.unit_id', 'left');
+
+        if ($search) {
+            $this->db->like('i.item_code', $search);
+            $this->db->or_like('i.item_name', $search);
+            $this->db->or_like('b.name', $search);
+        }
+
+        return $this->db->count_all_results();
     }
 
     /* ==========================
@@ -194,6 +310,7 @@ class Wo extends MX_Controller
      * ========================================== */
     public function store()
     {
+        $this->form_validation->set_rules('kategori_wo', 'Kategori WO', 'required|in_list[Injection,Cementing,Stitchdown]');
         $this->form_validation->set_rules('bom_l1_id', 'BOM', 'required|trim|integer');
         $this->form_validation->set_rules('date_order', 'Date Order', 'required|trim');
         $this->form_validation->set_rules('x_factory_date', 'X-Factory Date', 'required|trim');
@@ -203,6 +320,8 @@ class Wo extends MX_Controller
             $this->session->set_flashdata('error', validation_errors());
             return redirect('wo/create');
         }
+
+        $kategori_wo = $this->input->post('kategori_wo');
 
         $bom_l1_id = (int)$this->input->post('bom_l1_id');
         $l1 = $this->gm->get_row_where($this->bom_l1, ['id' => $bom_l1_id]);
@@ -241,6 +360,7 @@ class Wo extends MX_Controller
             'total_size_qty' => $total_size_qty,
             'notes'          => $notes,
             'no_wo'          => $no_wo, // Store No WO
+            'kategori_wo'    => $kategori_wo,
             'created_at'     => date('Y-m-d H:i:s'),
         ]);
         if (!$wo_l1_id || !is_numeric($wo_l1_id)) $wo_l1_id = $this->db->insert_id();
@@ -366,12 +486,15 @@ class Wo extends MX_Controller
     {
         if (!ctype_digit((string)$id)) show_404();
 
+        $this->form_validation->set_rules('kategori_wo', 'Kategori WO', 'required|in_list[Injection,Cementing,Stitchdown]');
         $this->form_validation->set_rules('date_order', 'Date Order', 'required|trim');
         $this->form_validation->set_rules('x_factory_date', 'X-Factory Date', 'required|trim');
 
         if (!$this->form_validation->run()) {
             return $this->edit($id);
         }
+
+        $kategori_wo = $this->input->post('kategori_wo');
 
         $w1 = $this->gm->get_row_where($this->wo_l1, ['id' => (int)$id]);
         if (!$w1) show_404();
@@ -393,6 +516,7 @@ class Wo extends MX_Controller
 
         // Update header
         $this->gm->update_data($this->wo_l1, [
+            'kategori_wo'    => $kategori_wo, // Update kategori_wo
             'date_order'     => $this->input->post('date_order'),
             'x_factory_date' => $this->input->post('x_factory_date'),
             'total_size_qty' => $total_size_qty,
@@ -539,6 +663,7 @@ class Wo extends MX_Controller
             'l2_list'        => $l2_list,
             'total_size_qty' => $total_size_qty,
             'grand_required' => $grand_required,
+            'kategori_wo'    => $w1['kategori_wo'] ?? '', // Ambil kategori_wo dari database
         ];
     }
 
