@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `data_count_defect` (
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table ai_erp.data_count_defect: ~7 rows (approximately)
-INSERT INTO `data_count_defect` (`id`, `id_defect`, `id_df`, `brand`, `nama_defect`, `qty`) VALUES
+REPLACE INTO `data_count_defect` (`id`, `id_defect`, `id_df`, `brand`, `nama_defect`, `qty`) VALUES
 	(3, 3, 39, 'ARIAT', 'POOR LEATHER', 3),
 	(4, 4, 39, 'ARIAT', 'OFF CENTER', 1),
 	(5, 5, 39, 'ARIAT', 'STAIN', 1),
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `data_defect` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table ai_erp.data_defect: ~4 rows (approximately)
-INSERT INTO `data_defect` (`id_defect`, `nama_defect`, `brand`, `desc_database`, `created_at`) VALUES
+REPLACE INTO `data_defect` (`id_defect`, `nama_defect`, `brand`, `desc_database`, `created_at`) VALUES
 	(3, 'POOR LEATHER', 'ARIAT', 'poor_leather', '2025-09-23 08:32:49'),
 	(4, 'OFF CENTER', 'ARIAT', 'off_center', '2025-09-23 08:42:48'),
 	(5, 'STAIN', 'ARIAT', 'stain', '2025-09-24 02:36:27'),
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `defect_spk` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
 
 -- Dumping data for table ai_erp.defect_spk: ~2 rows (approximately)
-INSERT INTO `defect_spk` (`id_spk`, `po_number`, `xfd`, `brand`, `artcolor_name`, `total_qty`, `created_at`) VALUES
+REPLACE INTO `defect_spk` (`id_spk`, `po_number`, `xfd`, `brand`, `artcolor_name`, `total_qty`, `created_at`) VALUES
 	(1, '343424223', '1111-11-11', 'ARIAT', '10074223 GREY HIPPO PRINT / BURGUNDY HAZE', '1001', '2025-09-23 08:05:45'),
 	(2, '4500182604', '2222-02-22', 'ARIAT', '10016292 BLACK DEERTAN', '91', '2025-09-23 08:08:56');
 
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `menus` (
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table ai_erp.menus: ~8 rows (approximately)
-INSERT INTO `menus` (`id`, `name`, `slug`, `url`, `icon`, `is_active`, `sort_order`, `created_at`, `updated_at`) VALUES
+REPLACE INTO `menus` (`id`, `name`, `slug`, `url`, `icon`, `is_active`, `sort_order`, `created_at`, `updated_at`) VALUES
 	(1, 'Dashboard', 'dashboard', 'dashboard', 'fa fa-dashboard', 1, 1, '2025-09-16 09:11:43', '2025-09-16 09:11:43'),
 	(2, 'User Management', 'user-management', NULL, 'fa fa-laptop', 1, 2, '2025-09-16 09:11:43', '2025-09-16 09:11:43'),
 	(3, 'Master Data', 'master-data', NULL, 'fa fa-laptop', 1, 3, '2025-09-16 09:11:43', '2025-09-16 09:11:43'),
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `submenus` (
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table ai_erp.submenus: ~25 rows (approximately)
-INSERT INTO `submenus` (`id`, `menu_id`, `name`, `slug`, `url`, `icon`, `is_active`, `sort_order`, `created_at`, `updated_at`) VALUES
+REPLACE INTO `submenus` (`id`, `menu_id`, `name`, `slug`, `url`, `icon`, `is_active`, `sort_order`, `created_at`, `updated_at`) VALUES
 	(1, 2, 'List User', 'listuser', 'listuser', 'fa fa-angle-right', 1, 1, '2025-09-16 09:11:43', '2025-09-16 09:11:43'),
 	(2, 2, 'Role Access', 'roleaccess', 'roleaccess', 'fa fa-angle-right', 1, 2, '2025-09-16 09:11:43', '2025-09-16 09:11:43'),
 	(3, 3, 'Category', 'category', 'category', 'fa fa-angle-right', 1, 1, '2025-09-16 09:11:43', '2025-09-16 09:11:43'),
