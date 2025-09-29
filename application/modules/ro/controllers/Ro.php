@@ -213,13 +213,14 @@ class Ro extends MX_Controller
             return redirect('ro');
         }
 
+        // Get details with item names
         $sql_details = "
-            SELECT d.*, l3.required_qty AS ref_required_qty
-            FROM {$this->tbl_det} d
-            LEFT JOIN {$this->wo_l3} l3 ON l3.id = d.wo_l3_id
-            WHERE d.ro_header_id = " . (int)$id . "
-            ORDER BY d.id ASC
-        ";
+        SELECT d.*, it.item_code, it.item_name
+        FROM {$this->tbl_det} d
+        LEFT JOIN {$this->items} it ON it.id = d.item_id
+        WHERE d.ro_header_id = " . (int)$id . "
+        ORDER BY d.id ASC
+    ";
         $details = $this->gm->custom_query($sql_details);
 
         $data = [

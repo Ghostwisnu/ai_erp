@@ -10,7 +10,7 @@ $action_url = $is_edit ? site_url('ro/update/' . (int)$header['id']) : site_url(
                     <header class="card-header">
                         <?= html_escape($title ?? 'Request Order') ?>
                         <span class="tools pull-right">
-                            <a href="<?= site_url('ro') ?>" class="btn btn-sm btn-default">Back</a>
+                            <a href="<?= site_url('ro') ?>" class="btn btn-sm btn-default" style="color: black;">Back</a>
                         </span>
                     </header>
 
