@@ -20,7 +20,7 @@
                         <td><?= htmlspecialchars($r['brand_name'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars($r['unit_name'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                         <td>
-                            <button type="button" class="btn btn-info btn-sm" onclick="openCheckinDetail(<?= (int)$r['id'] ?>)">Detail Check-In</button>
+                            <button type="button" class="btn btn-info btn-sm mb-1" onclick="openCheckinDetail(<?= (int)$r['id'] ?>)">Detail Check-In</button>
                             <button type="button" class="btn btn-secondary btn-sm" onclick="openStockSummary(<?= (int)$r['id'] ?>)">Ringkasan Stok</button>
                         </td>
                     </tr>
