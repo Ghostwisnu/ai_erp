@@ -21,12 +21,11 @@
                             <div class="form-group">
                                 <label>PO Number</label>
                                 <select class="form-control" name="po_number" id="po_number" required>
-    <option value="">-- Pilih PO Number --</option>
-    <?php foreach ($spk as $s): ?>
-        <option value="<?= $s['po_number'] ?>"><?= $s['po_number'] ?></option>
-    <?php endforeach; ?>
-</select>
-
+                                    <option value="">-- Pilih PO Number --</option>
+                                    <?php foreach ($spk as $s): ?>
+                                        <option value="<?= $s['po_number'] ?>"><?= $s['po_number'] ?></option>
+                                    <?php endforeach; ?>
+                                </select>
                             </div>
 
                             <!-- Art Color (auto) -->

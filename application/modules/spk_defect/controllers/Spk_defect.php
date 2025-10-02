@@ -76,34 +76,60 @@ class Spk_defect extends MX_Controller
             'pagination_links' => build_pagination($this, site_url('spk_defect'), $total, $per),
         ];
 
-        $this->_render('shared/list', $data);
+        $this->_render('spk_defect/list', $data);
     }
 
-    public function create()
-    {
-        $data = [
-            'title' => 'Tambah SPK Defect',
-            'post_url' => site_url('spk_defect/store'),
-            'back_url' => site_url('spk_defect'),
-            'fields' => [
-                ['name' => 'po_number', 'label' => 'PO Number', 'type' => 'text'],
-                ['name' => 'xfd', 'label' => 'XFD', 'type' => 'date'],
-                [
-                    'name' => 'brand',
-                    'label' => 'Brand',
-                    'type' => 'select',
-                    'options' => [
-                        'ARIAT'      => 'ARIAT',
-                        'BLACKSTONE' => 'BLACKSTONE',
-                        'ROSSI'      => 'ROSSI',
-                    ]
-                ],
-                ['name' => 'artcolor_name', 'label' => 'Art/Color', 'type' => 'text'],
-                ['name' => 'total_qty', 'label' => 'Total Qty', 'type' => 'number'],
-            ],
-        ];
-        $this->_render('shared/form', $data);
+   public function create()
+{
+    // ambil data wo_l1 untuk dropdown
+    $wo_options = $this->db->select('art_color, x_factory_date, brand_id, SUM(total_size_qty) as total_qty')
+        ->from('wo_l1')
+        ->group_by(['art_color', 'x_factory_date', 'brand_id'])
+        ->order_by('x_factory_date', 'asc')
+        ->get()
+        ->result_array();
+
+    $dropdown = [];
+    foreach ($wo_options as $w) {
+        // Label hanya untuk ditampilkan di select
+        $label = $w['art_color'] . ' | ' . $w['x_factory_date'] . ' | Qty: ' . (int)$w['total_qty'];
+
+        // Value berisi JSON lengkap, termasuk art_color yang nanti autofill ke artcolor_name
+        $value = json_encode([
+            'art_color' => $w['art_color'],            // akan di-isi ke artcolor_name
+            'xfd'       => $w['x_factory_date'],
+            'total_qty' => (int)$w['total_qty'],
+            'brand'     => $w['brand_id']
+        ]);
+
+        $dropdown[$value] = $label;
     }
+
+    $data = [
+        'title'    => 'Tambah SPK Defect',
+        'post_url' => site_url('spk_defect/store'),
+        'back_url' => site_url('spk_defect'),
+        'fields'   => [
+            ['name' => 'po_number',     'label' => 'PO Number',    'type' => 'text'],
+            ['name' => 'xfd',           'label' => 'XFD',          'type' => 'date'],
+            [
+                'name'    => 'wo_l1_ref',
+                'label'   => 'WO (Art/Color + XFD)',
+                'type'    => 'select',
+                'options' => $dropdown
+            ],
+            [
+                'name' => 'brand',
+                'label'=> 'Brand',
+                'type' => 'text', // readonly autofill
+            ],
+            ['name' => 'artcolor_name', 'label' => 'Art/Color', 'type' => 'text'], // autofill dari art_color
+            ['name' => 'total_qty',     'label' => 'Total Qty', 'type' => 'number'],
+        ],
+    ];
+
+    $this->_render('spk_defect/form', $data);
+}
 
     public function edit($id)
     {
@@ -137,23 +163,28 @@ class Spk_defect extends MX_Controller
     }
 
     public function store()
-    {
-        $this->form_validation->set_rules('po_number', 'PO Number', 'required|trim');
-        $this->form_validation->set_rules('xfd', 'XFD', 'required');
-        $this->form_validation->set_rules('brand', 'Brand', 'required|trim');
-        if (!$this->form_validation->run()) return $this->create();
+{
+    $this->form_validation->set_rules('po_number', 'PO Number', 'required|trim');
+    $this->form_validation->set_rules('xfd', 'XFD', 'required');
+    $this->form_validation->set_rules('brand', 'Brand', 'required|trim');
+    if (!$this->form_validation->run()) return $this->create();
 
-        $this->gm->insert_data($this->table, [
-            'po_number'     => $this->input->post('po_number', true),
-            'xfd'           => $this->input->post('xfd', true),
-            'brand'         => $this->input->post('brand', true),
-            'artcolor_name' => $this->input->post('artcolor_name', true),
-            'total_qty'     => $this->input->post('total_qty', true),
-            'created_at'    => date('Y-m-d H:i:s'),
-        ]);
-        $this->session->set_flashdata('message', 'Data SPK Defect ditambahkan.');
-        redirect('spk_defect');
-    }
+    // parsing pilihan dropdown (JSON)
+    $wo_ref = $this->input->post('wo_l1_ref', true);
+    $wo_data = $wo_ref ? json_decode($wo_ref, true) : null;
+
+    $this->gm->insert_data($this->table, [
+        'po_number'     => $this->input->post('po_number', true),
+        'xfd'           => $this->input->post('xfd', true), // sudah autofill dari JSON
+        'brand'         => $this->input->post('brand', true), // sudah autofill dari JSON
+        'artcolor_name' => $this->input->post('artcolor_name', true), // langsung pakai field input (autofill dari JSON)
+        'total_qty'     => (int)$this->input->post('total_qty', true),
+        'created_at'    => date('Y-m-d H:i:s'),
+    ]);
+
+    $this->session->set_flashdata('message', 'Data SPK Defect ditambahkan.');
+    redirect('spk_defect');
+}
 
     public function update($id)
     {
