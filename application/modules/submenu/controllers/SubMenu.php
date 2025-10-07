@@ -7,6 +7,7 @@ class SubMenu extends MX_Controller
         parent::__construct();
         $this->_guard();
         $this->load->model('Menu_model');
+        $this->load->model('Generic_model');
         $this->load->library(['form_validation', 'session']);
         $this->load->helper(['url', 'form']);
     }

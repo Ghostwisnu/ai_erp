@@ -344,7 +344,7 @@ class Production extends MX_Controller
             return redirect('production/create/' . $ro_id);
         }
 
-        $ro_new_status = $incomplete ? 'belum_lengkap' : 'sudah_lengkap';
+        $ro_new_status = $incomplete ? 'belum lengkap' : 'sudah lengkap';
 
         $this->db->trans_begin();
         try {
@@ -680,7 +680,7 @@ class Production extends MX_Controller
         $brand_id = (int)$this->input->post('brand_id');
 
         $ro = $this->gm->get_row_where($this->ro_hdr, ['id' => $ro_id]);
-        if (!$ro || !in_array(($ro['status_ro'] ?? ''), ['submitted', 'belum_lengkap'], true)) {
+        if (!$ro || !in_array(($ro['status_ro'] ?? ''), ['submitted', 'belum lengkap'], true)) {
             $this->session->set_flashdata('flash_error', 'RO tidak valid untuk update report.');
             return redirect('production/ro_list');
         }
@@ -743,7 +743,7 @@ class Production extends MX_Controller
             ];
         }
 
-        $ro_new_status = $incomplete ? 'belum_lengkap' : 'sudah_lengkap';
+        $ro_new_status = $incomplete ? 'belum lengkap' : 'sudah lengkap';
 
         $this->db->trans_begin();
         try {

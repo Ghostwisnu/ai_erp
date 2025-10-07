@@ -19,7 +19,7 @@
                             <div class="alert alert-success"><?= $this->session->flashdata('message'); ?></div>
                         <?php endif; ?>
 
-                        <form method="get" action="<?= site_url('submenu/index'); ?>" class="form-inline mb-3">
+                        <form method="get" action="<?= base_url('submenu/index'); ?>" class="form-inline mb-3">
                             <div class="form-group">
                                 <label class="mr-2">Pilih Menu:</label>
                                 <select name="menu_id" class="form-control" onchange="this.form.submit()">

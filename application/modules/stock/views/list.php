@@ -147,10 +147,16 @@
     }
 
     function openStockSummary(itemId) {
+        console.log("Opening stock summary for item ID: " + itemId); // Debugging line
         fetch('<?= site_url('stock/ajax_item_stock_summary') ?>/' + itemId)
-            .then(r => r.json()).then(p => {
+            .then(r => r.json())
+            .then(p => {
                 const tb = document.querySelector('#tblStockSummary tbody');
+                let totalIn = 0,
+                    totalOut = 0,
+                    totalStock = 0; // Declare variables here
                 tb.innerHTML = '';
+
                 if (p.ok && Array.isArray(p.rows)) {
                     p.rows.forEach(r => {
                         const tr = document.createElement('tr');
@@ -161,9 +167,29 @@
                         <td class="text-right">${nf(r.total_out)}</td>
                         <td class="text-right">${nf(r.total_stock)}</td>`;
                         tb.appendChild(tr);
+
+                        // Add to the totals
+                        totalIn += parseFloat(r.total_in || 0);
+                        totalOut += parseFloat(r.total_out || 0);
+                        totalStock += parseFloat(r.total_stock || 0);
                     });
+
+                    // Add the total row
+                    const trTotal = document.createElement('tr');
+                    trTotal.innerHTML = `
+                    <td colspan="2" class="text-center"><strong>Total</strong></td>
+                    <td class="text-right"><strong>${nf(totalIn)}</strong></td>
+                    <td class="text-right"><strong>${nf(totalOut)}</strong></td>
+                    <td class="text-right"><strong>${nf(totalStock)}</strong></td>`;
+                    tb.appendChild(trTotal);
+                } else {
+                    tb.innerHTML = '<tr><td colspan="6" class="text-center">No data found</td></tr>';
                 }
-                $('#modalStockSummary').modal('show');
+                $('#modalStockSummary').modal('show'); // Open the modal
+            })
+            .catch(err => {
+                console.error('Error fetching stock summary:', err);
+                alert('Error fetching stock summary');
             });
     }
 
